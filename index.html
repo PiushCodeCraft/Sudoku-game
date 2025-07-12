@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sudoku Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Top-right dark mode toggle -->
+  <button class="dark-toggle" onclick="toggleDarkMode()">🌙</button>
+
+  <h1>Sudoku Game 🧩</h1>
+  <!-- <h1><a href="#" onclick="goHome()" class="game-title">Sudoku Game 🧩</a></h1> -->
+
+<!-- Place this just ABOVE the #sudoku-board div -->
+<div id="game-info" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 500px; margin: 0 auto 8px auto;">
+  <div id="level-label" style="font-size: 16px; display: none;">Level: BASIC</div>
+  <div id="timer" style="font-size: 16px; display: none;">
+    Time: <span id="time-value">00:00</span>
+    <button id="pause-btn" onclick="togglePause()" style="border: none; background: none; font-size: 16px; cursor: pointer;">⏸️</button>
+  </div>
+</div>
+
+
+
+
+  <!-- Sudoku board -->
+  <div id="sudoku-board"></div>
+
+  <!-- Start screen -->
+  <div id="start-container">
+    <button onclick="startGame()">Start Game</button>
+    <div id="level-select">
+  <label><input type="radio" name="level" value="basic" checked> Basic</label>
+  <label><input type="radio" name="level" value="medium"> Medium</label>
+  <label><input type="radio" name="level" value="extreme"> Extreme</label>
+</div>
+
+  </div>
+
+  <!-- Game controls -->
+  <div class="controls" id="game-controls" style="display: none;">
+    <button onclick="goHome()"> Home</button> <!-- 🆕 Home button first -->
+    <button onclick="generatePuzzle(currentLevel)">New Game</button>
+    <button onclick="checkSolution()">Check</button>
+    <button onclick="resetBoard()">Reset</button>
+  </div>
+
+  <!-- Message and End screen -->
+  <div id="end-message" style="display: none;">
+  <h2>🎉 Congratulations! You solved it! 🎉</h2>
+  <button onclick="startGame()">🔄 Restart</button>
+  <button class="home-btn" onclick="goHome()">🏠 Home</button>
+
+</div>
+
+
+  <script src="script.js"></script>
+</body>
+</html>
