@@ -4,6 +4,8 @@ let currentLevel = 'basic'; // 👈 Track selected difficulty globally
 let isPaused = false;
 let timerInterval;
 let timeElapsed = 0;
+let selectedCellIndex = null;
+let hintCount = 3; // 💡 Limit to 3 hints per game
 
 function createBoard() {
   board.innerHTML = '';
@@ -14,6 +16,7 @@ function createBoard() {
     input.classList.add('cell');
 
     input.addEventListener('focus', () => {
+      selectedCellIndex = i;
       highlightSameNumbers('');
     });
 
@@ -107,6 +110,8 @@ function generatePuzzle(level = 'basic') {
 
   stopTimer();
   startTimer();
+  hintCount = 3; // 🔄 Reset hint count on new game
+  updateHintButton();
 }
 
 function highlightSameNumbers(value) {
@@ -126,7 +131,11 @@ function resetBoard() {
   });
   highlightSameNumbers('');
   stopTimer();
+  timeElapsed = 0;
+  updateTimer();
   startTimer();
+  hintCount = 3; // 🔄 Reset hint count on reset
+  updateHintButton();
 }
 
 function goHome() {
@@ -136,30 +145,24 @@ function goHome() {
   document.getElementById('end-message').style.display = 'none';
   document.getElementById('timer').style.display = 'none';
   document.getElementById('time-value').textContent = '00:00';
-  document.getElementById('level-label').style.display = 'none'; // ✅ Hide level text
+  document.getElementById('level-label').style.display = 'none';
   board.innerHTML = '';
 }
 
-
 function startGame() {
   currentLevel = document.querySelector('input[name="level"]:checked').value;
-
   generatePuzzle(currentLevel);
 
   document.getElementById('start-container').style.display = 'none';
   document.getElementById('game-controls').style.display = 'block';
   document.getElementById('end-message').style.display = 'none';
 
-  // ✅ Show the selected level
   const levelLabel = document.getElementById('level-label');
   levelLabel.style.display = 'block';
   levelLabel.textContent = `Level: ${currentLevel.toUpperCase()}`;
 
   startTimer();
 }
-
-
-
 
 function checkSolution() {
   const cells = Array.from(board.children);
@@ -226,7 +229,6 @@ function toggleDarkMode() {
   localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
 }
 
-
 function startTimer() {
   stopTimer();
   timeElapsed = 0;
@@ -249,6 +251,7 @@ function stopTimer() {
   timerInterval = null;
   document.getElementById('timer').style.display = 'none';
 }
+
 function togglePause() {
   const pauseBtn = document.getElementById('pause-button');
   const cells = Array.from(board.children);
@@ -265,7 +268,6 @@ function togglePause() {
       timeElapsed++;
       updateTimer();
     }, 1000);
-    // Re-enable only non-prefilled cells
     cells.forEach((cell, i) => {
       if (!cell.classList.contains('prefilled')) {
         cell.disabled = false;
@@ -273,9 +275,44 @@ function togglePause() {
     });
   }
 }
+
 window.addEventListener('DOMContentLoaded', () => {
   const darkModeSetting = localStorage.getItem('darkMode');
   if (darkModeSetting === 'enabled') {
     document.body.classList.add('dark');
   }
 });
+
+function updateHintButton() {
+  const hintBtn = document.getElementById('hint-btn');
+  if (hintBtn) {
+    hintBtn.textContent = `💡 ${hintCount}`;
+    hintBtn.disabled = hintCount === 0;
+  }
+}
+
+function giveHint() {
+  const cells = Array.from(board.children);
+
+  if (hintCount <= 0) {
+    alert("You've used all your hints!");
+    return;
+  }
+
+  if (
+    selectedCellIndex === null ||
+    cells[selectedCellIndex].disabled ||
+    cells[selectedCellIndex].value !== ""
+  ) {
+    alert("Please select an empty cell to get a hint.");
+    return;
+  }
+
+  const hintValue = fullBoard[selectedCellIndex];
+  cells[selectedCellIndex].value = hintValue;
+  cells[selectedCellIndex].disabled = true;
+  cells[selectedCellIndex].classList.add('hinted');
+  selectedCellIndex = null;
+  hintCount--;
+  updateHintButton();
+}

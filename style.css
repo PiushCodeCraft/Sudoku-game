@@ -198,3 +198,8 @@ body.dark button {
   background-color: #444;
   color: white;
 }
+.hinted {
+  background-color: #d0f0ff;
+  color: #333;
+  font-weight: bold;
+}
