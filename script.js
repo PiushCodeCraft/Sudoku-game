@@ -125,16 +125,25 @@ function highlightSameNumbers(value) {
 
 function resetBoard() {
   Array.from(board.children).forEach(cell => {
-    if (!cell.disabled) {
+
+    // Remove previous hints
+    cell.classList.remove('hinted');
+
+    // Reset values for non-prefilled cells
+    if (!cell.classList.contains('prefilled')) {
       cell.value = '';
+      cell.disabled = false;   // 🔥 FIX: make hinted cells clickable again
     }
   });
+
   highlightSameNumbers('');
   stopTimer();
   timeElapsed = 0;
   updateTimer();
   startTimer();
-  hintCount = 3; // 🔄 Reset hint count on reset
+
+  // Reset hint count
+  hintCount = 3;
   updateHintButton();
 }
 
